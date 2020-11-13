@@ -97,9 +97,9 @@ def copyNode(node, p):
 def computeRoot(n):
   h = getHeight(n)
   root_t = -1
-  if n >= pow(2, h-1) and n <= pow(2, h-1) + (pow(2, h-2) - 2):
+  if n >= pow(2, h-1) and n <= pow(2, h-1) + pow(2, h-2) - 2:
     root_t = n - pow(2, h-2) + 1
-  elif n >= pow(2, h-1) + pow(2, h-1) - 1 and n <= pow(2, h) -1:
+  elif n >= pow(2, h-1) + pow(2, h-2) - 1 and n <= pow(2, h) -1:
     root_t = pow(2, h-1)
   
   return root_t
@@ -127,14 +127,34 @@ def getNodeFromRightForearm(t, i):
     node = node.left
   return node
 
-def cs(t):
-  return ls(t) + rs(t)
+def getForearmsHeight(t):
+  n = t.root.int[1]
+  th = getHeight(n)
+  if (n >= pow(2, th-1) and n <= pow(2, th-1) + pow(2, th-2) - 2) or (n == pow(2, th-1) + pow(2, th-2) - 1):
+    return (th-1, th-2)
+  else:
+    return (th-1,th-1)
 
-def ls(t):
-  return 1
+def cs(root_t):
+  return ls(root_t) + rs(root_t)
 
-def rs(t):
-  return 2
+def ls(root_t):
+  f = root_t.left
+  sum = 0
+  while f is not None:
+    sum += 1
+    f = f.right
+
+  return sum
+
+def rs(root_t):
+  f = root_t.right
+  sum = 0
+  while f is not None:
+    sum += 1
+    f = f.left
+
+  return sum
 
 def flipCoin(p):
   r = random.random()
