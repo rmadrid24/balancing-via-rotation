@@ -86,6 +86,7 @@ def copyNode(node, p):
   
   temp = Node(node.data)
   temp.parent = p
+  temp.int = node.int
   tempLeft = copyNode(node.left, temp)
   tempRight = copyNode(node.right, temp)
   temp.left = tempLeft
@@ -94,21 +95,46 @@ def copyNode(node, p):
   return temp
 
 def computeRoot(n):
-  h = math.ceil(math.log2(n+1))
-  print("h=" + str(h))
+  h = getHeight(n)
   root_t = -1
-  if n >= math.pow(2, h-1) and n <= math.pow(2, h-1) + (math.pow(2, h-2) - 2):
-    root_t = n - math.pow(2, h-2) + 1
-  elif n >= math.pow(2, h-1) + math.pow(2, h-1) - 1 and n <= math.pow(2, h) -1:
-    root_t = math.pow(2, h-1)
+  if n >= pow(2, h-1) and n <= pow(2, h-1) + (pow(2, h-2) - 2):
+    root_t = n - pow(2, h-2) + 1
+  elif n >= pow(2, h-1) + pow(2, h-1) - 1 and n <= pow(2, h) -1:
+    root_t = pow(2, h-1)
   
   return root_t
 
-# iterative-search
+def getHeight(n):
+  return math.ceil(math.log2(n+1))
 
-# Guess how to form forearms
+def iterativeSearch(x, k):
+  while x is not None and k != x.data:
+    if k < x.data:
+      x = x.left
+    else:
+      x = x.right
+  return x
 
-#do i need to add height property to node
+def getNodeFromLeftForearm(t, i):
+  node = t.root.left
+  for _ in range(1, i):
+    node = node.right
+  return node
+
+def getNodeFromRightForearm(t, i):
+  node = t.root.right
+  for _ in range(1, i):
+    node = node.left
+  return node
+
+def cs(t):
+  return ls(t) + rs(t)
+
+def ls(t):
+  return 1
+
+def rs(t):
+  return 2
 
 def flipCoin(p):
   r = random.random()
