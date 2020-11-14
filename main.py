@@ -3,54 +3,25 @@ from util import *
 
 rotations = 0
 
-# function to convert sorted array to a balanced BST 
-# def sortedArrayToBST(arr):
-#   if not arr: 
-#     return None
-
-#   # find middle
-#   n = len(arr)
-#   mid = n // 2
-    
-#   # make the middle element the root 
-#   root = Node(arr[mid])
-#   root.int = (arr[0], arr[n-1])
-
-#   # left subtree of root has all 
-#   # values <arr[mid] 
-#   root.left = sortedArrayToBST(arr[:mid])
-      
-#   # right subtree of root has all  
-#   # values >arr[mid] 
-#   root.right = sortedArrayToBST(arr[mid+1:])
-  
-#   if root.left is not None:
-#     root.left.parent = root
-  
-#   if root.right is not None:
-#     root.right.parent = root
-  
-#   return root
-
+# function to convert sorted array to a almost complete balanced tree 
 def sortedArrayToBST(arr):
   if not arr: 
     return None
 
-  # find middle
+  # find root
   n = len(arr)
-  mid = computeRoot(n) - 1
-    
-  # make the middle element the root 
-  root = Node(arr[mid])
+  r = computeRoot(n) - 1
+
+  root = Node(arr[r])
   root.int = (arr[0], arr[n-1])
 
   # left subtree of root has all 
-  # values <arr[mid] 
-  root.left = sortedArrayToBST(arr[:mid])
+  # values <arr[r] 
+  root.left = sortedArrayToBST(arr[:r])
       
   # right subtree of root has all  
-  # values >arr[mid] 
-  root.right = sortedArrayToBST(arr[mid+1:])
+  # values >arr[r] 
+  root.right = sortedArrayToBST(arr[r+1:])
   
   if root.left is not None:
     root.left.parent = root
@@ -89,10 +60,6 @@ def buildS(t):
           rot(tree_s, x, y)
   
   return tree_s
-
-# Guess how to form forearms. go to root.left and check if it has left child
-# Rotate each left child in DFS style.
-# Then move to right child
 
 def buildLeftForearm(t):
   global rotations
@@ -168,27 +135,12 @@ def a1(S, n, T):
   while x.parent is not None:
     rotations += 1
     rot(S, x.parent, x)
-  # print("Rotations parent" + str(rotations))
   buildLeftForearm(S)
-  # print("Rotations left arm" + str(rotations))
   buildRightForearm(S)
-  # print("Rotations right arm" + str(rotations))
-  # print("Print arms")
-  # preOrder(S.root)
-  # print("")
   al(S, T)
-  # print("Rotations al" + str(rotations))
-  # print("Print al")
-  # preOrder(S.root)
-  # print("")
   ar(S, T)
-  # print("Rotations ar" + str(rotations))
-  # print("Print ar")
-  # preOrder(S.root)
-  # print("")
 
-def matchRotationsA1(t, r):
-  n = t.root.int[1]
+def rotationsA1(t, n):
   h = getHeight(n)
   p = float('-inf')
   
@@ -199,26 +151,37 @@ def matchRotationsA1(t, r):
   elif n >= pow(2, h-1) + pow(2, h-2) and n<= pow(2, h) - 1:
     p = -1
   
-  actualRotations = (2 * n) - (2 * math.floor(math.log2(n))) - cs(t.root) + p
-  print("Needed rots " + str(actualRotations))
-  return r == actualRotations
+  return (2 * n) - (2 * math.floor(math.log2(n))) - cs(t.root) + p
 
 if __name__=="__main__":
-  n = int(sys.argv[1])
-  for _ in range(0,5):
-    rotations = 0
+  # n = int(sys.argv[1])
+  # print("Starting trees with " + str(n) + " nodes")
+  tests = [500, 1000, 1500]
+  # arr = [x for x in range(1, n + 1)]
+  # root_t = sortedArrayToBST(arr)
+  # t = Tree(root_t)
+  # maxRotations = rotationsA1(t)
+  # print("Upper bound rotations: " + str(maxRotations))
+  for test in tests:
+    n = test
     print("Starting trees with " + str(n) + " nodes")
     arr = [x for x in range(1, n + 1)]
     root_t = sortedArrayToBST(arr)
     t = Tree(root_t)
-    s = buildS(t)
-    print("Print t")
-    preOrder(t.root)
-    print("")
-    print("Print s")
-    preOrder(s.root)
-    print("")
+    maxRotations = rotationsA1(t, n)
+    print("Upper bound rotations: " + str(maxRotations))
+    for i in range(0,5):
+      rotations = 0
+      s = buildS(t)
+      # print("T: ", end='')
+      # preOrder(t.root)
+      # print("")
+      # print("Initial S: ", end='')
+      # preOrder(s.root)
+      # print("")
 
-    a1(s, n, t)
-    print("Rotations " + str(rotations))
-    print("A1 Rotations match " + str(matchRotationsA1(t, rotations)))
+      a1(s, n, t)
+      # print("Resulting S: ", end='')
+      # preOrder(s.root)
+      # print("")
+      print("Test " + str(i) + " with " + str(test) + " nodes: " + str(rotations) + " rotations")
