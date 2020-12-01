@@ -8,9 +8,13 @@ class Node:
     self.right = None
     self.parent = None
     self.int = None
+    self.maxIdentical = False
+    self.identical = False
+    self.equivalent = False
+    self.rep = ""
   
   def __str__(self):
-        return 'Node {self.data} with left child {self.left.data}, right child {self.right.data}, and int {self.int}'.format(self=self)
+        return 'Node {self.data} with int {self.int}'.format(self=self)
   
   def __hash__(self):
     return hash(self.data)
@@ -65,6 +69,16 @@ def leftRotate(t, x, y):
   y.left = x
   x.parent = y
 
+  # updating intervals
+  lx = x.int[0]
+  ry = y.int[1]
+  if x.right is not None:
+    x.int = (lx, x.right.int[1])
+  else:
+    x.int = (lx,x.data)
+  
+  y.int = (lx, ry)
+
 def righRotate(t, x, y):
   x.left = y.right
   if y.right is not None:
@@ -80,6 +94,16 @@ def righRotate(t, x, y):
   y.right = x
   x.parent = y
 
+  # updating intervals
+  rx = x.int[1]
+  ly = y.int[0]
+  if x.left is not None:
+    x.int = (x.left.int[0], rx)
+  else:
+    x.int = (x.data,rx)
+  
+  y.int = (ly, rx)
+
 def copyNode(node, p):
   if node is None:
     return None
@@ -87,6 +111,10 @@ def copyNode(node, p):
   temp = Node(node.data)
   temp.parent = p
   temp.int = node.int
+  temp.maxIdentical = node.maxIdentical
+  temp.equivalent = node.equivalent
+  temp.rep = node.rep
+  temp.identical = node.identical
   tempLeft = copyNode(node.left, temp)
   tempRight = copyNode(node.right, temp)
   temp.left = tempLeft
@@ -115,25 +143,10 @@ def iterativeSearch(x, k):
       x = x.right
   return x
 
-def getNodeFromLeftForearm(t, i):
-  node = t.root.left
-  for _ in range(1, i):
-    node = node.right
-  return node
-
-def getNodeFromRightForearm(t, i):
-  node = t.root.right
-  for _ in range(1, i):
-    node = node.left
-  return node
-
-def getForearmsHeight(t):
-  n = t.root.int[1]
-  th = getHeight(n)
-  if (n >= pow(2, th-1) and n <= pow(2, th-1) + pow(2, th-2) - 2) or (n == pow(2, th-1) + pow(2, th-2) - 1):
-    return (th-1, th-2)
-  else:
-    return (th-1,th-1)
+def isLeaf(node):
+  if node.left is None and node.right is None:
+    return True
+  return False
 
 def cs(root_t):
   return ls(root_t) + rs(root_t)
